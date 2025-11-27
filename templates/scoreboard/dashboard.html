@@ -1,0 +1,113 @@
+<!-- ============================================ -->
+<!-- FILE: templates/scoreboard/dashboard.html -->
+<!-- ============================================ -->
+{% extends 'scoreboard/base.html' %}
+
+{% block title %}Dashboard - Scoreboard{% endblock %}
+
+{% block content %}
+
+{% if is_admin %}
+<div class="card">
+    <h2 style="margin-bottom: 1rem;">Quick Actions</h2>
+    <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+        <a href="{% url 'score_entry_create' %}" class="btn btn-success">➕ Add New Scores</a>
+        <a href="{% url 'member_create' %}" class="btn">👥 Add Member</a>
+        <a href="{% url 'register_user' %}" class="btn">🔐 Register User</a>
+    </div>
+</div>
+{% endif %}
+
+<div class="overall-score-section">
+    <h2 class="section-title">Overall Scoreboard</h2>
+    <p class="section-desc">Total score ranking of all members.</p>
+
+    <table class="score-table">
+        <thead>
+            <tr>
+                <th>Rank</th>
+                <th>Member</th>
+                <th>Total Score</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for m in members_score %}
+            <tr>
+
+                <!-- Rank -->
+                <td class="
+                    {% if forloop.counter == 1 %}rank-text-1{% endif %}
+                    {% if forloop.counter == 2 %}rank-text-2{% endif %}
+                    {% if forloop.counter == 3 %}rank-text-3{% endif %}
+                ">
+                    #{{ forloop.counter }}
+                </td>
+
+                <!-- Member Name -->
+                <td class="
+                    {% if forloop.counter == 1 %}rank-text-1{% endif %}
+                    {% if forloop.counter == 2 %}rank-text-2{% endif %}
+                    {% if forloop.counter == 3 %}rank-text-3{% endif %}
+                ">
+                    {{ m.name }}
+                </td>
+
+                <!-- Total Score -->
+                <td class="
+                    {% if m.total_score < 0 %}neg-score{% endif %}
+                    {% if forloop.counter == 1 %}rank-text-1{% endif %}
+                    {% if forloop.counter == 2 %}rank-text-2{% endif %}
+                    {% if forloop.counter == 3 %}rank-text-3{% endif %}
+                ">
+                    {{ m.total_score|default:"0" }}
+                </td>
+
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+
+<div class="card">
+    <h2 style="margin-bottom: 1rem;">Recent Score Entries</h2>
+    
+    {% if score_entries %}
+        <div class="grid">
+            {% for entry in score_entries %}
+            <div class="score-card">
+                {% if entry.image %}
+                    <img src="{{ entry.image.url }}" alt="Game Image">
+                {% endif %}
+                
+                <h3 style="margin-bottom: 0.5rem;">{{ entry.date|date:"F d, Y" }}</h3>
+                <p style="color: #6b7280; font-size: 0.875rem; margin-bottom: 1rem;">
+                    By {{ entry.created_by.username }}
+                </p>
+                
+                <div style="display: flex; gap: 0.5rem;">
+                    <a href="{% url 'score_entry_detail' entry.id %}" class="btn" style="flex: 1; text-align: center;">
+                        View Details
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p style="color: #6b7280; text-align: center; padding: 2rem;">
+            No score entries yet. {% if is_admin %}Add your first one!{% endif %}
+        </p>
+    {% endif %}
+</div>
+
+<div class="card">
+    <h2 style="margin-bottom: 1rem;">All Members ({{ members.count }})</h2>
+    <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+        {% for member in members %}
+            <span class="badge" style="background: #e0e7ff; color: #3730a3; padding: 0.5rem 1rem;">
+                {{ member.name }}
+            </span>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

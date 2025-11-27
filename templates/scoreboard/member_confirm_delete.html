@@ -1,0 +1,23 @@
+<!-- ============================================ -->
+<!-- FILE: templates/scoreboard/member_confirm_delete.html -->
+<!-- ============================================ -->
+{% extends 'scoreboard/base.html' %}
+
+{% block title %}Delete Member{% endblock %}
+
+{% block content %}
+<div class="card" style="max-width: 600px; margin: 0 auto;">
+    <h1 style="margin-bottom: 1rem; color: #ef4444;">Confirm Deletion</h1>
+    <p style="margin-bottom: 2rem; font-size: 1.1rem;">
+        Are you sure you want to delete member <strong>{{ member.name }}</strong>?
+    </p>
+    
+    <form method="post">
+        {% csrf_token %}
+        <div style="display: flex; gap: 1rem;">
+            <button type="submit" class="btn btn-danger" style="flex: 1;">Yes, Delete</button>
+            <a href="{% url 'member_list' %}" class="btn" style="flex: 1; text-align: center; background: #6b7280;">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

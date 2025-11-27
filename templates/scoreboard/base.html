@@ -1,0 +1,482 @@
+<!-- ============================================ -->
+<!-- FILE: templates/scoreboard/base.html -->
+<!-- ============================================ -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Scoreboard App{% endblock %}</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #dddfea 0%, #eae5f0 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #1e293b;
+            padding: 15px 20px;
+            border-radius: 8px;
+            color: white;
+        }
+
+        .navbar-brand {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .navbar-menu {
+            display: flex;
+            gap: 20px;
+        }
+
+        .navbar-menu a, .btn {
+            padding: 0.5rem 1rem;
+            text-decoration: none;
+            color: #ffffff;
+            border-radius: 5px;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+            display: inline-block;
+        }
+        .navbar-toggle {
+            display: none;
+            font-size: 30px;
+            cursor: pointer;
+        }
+        .rank-text-1 {
+            color: #fbd80f !important;   /* Gold */
+            font-weight: 700;
+        }
+
+        .rank-text-2 {
+            color: #ffffff !important;   /* Silver */
+            font-weight: 700;
+        }
+
+        .rank-text-3 {
+            color: #e19142 !important;   /* Bronze */
+            font-weight: 700;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+
+            .navbar-menu {
+                display: none;
+                flex-direction: column;
+                background: #334155;
+                padding: 20px;
+                margin-top: 10px;
+                border-radius: 8px;
+            }
+
+            .navbar-menu a, .btn{
+                padding: 10px 0;
+            }
+
+            .navbar-menu a, .btn {
+                padding: 10px 0;
+                text-decoration: none;
+                font-size: 20px;
+                color: #ffffff;
+                border-radius: 5px;
+                transition: all 0.3s;
+                border: none;
+                cursor: pointer;
+                display: inline-block;
+            }
+
+            
+
+            .navbar-toggle {
+                display: block;
+            }
+
+            .navbar.active #navbarMenu {
+                display: flex;
+            }
+        }
+
+        .btn {
+            background: #667eea;
+            color: white;
+            font-size: 1rem;
+        }
+        
+        .btn:hover {
+            color: red;
+        }
+        
+        .btn-danger {
+            padding: 6px 10px;      /* smaller padding */
+            font-size: 14px;        /* smaller text */
+            line-height: 1;         /* tight height */
+            border-radius: 5px;     /* optional */
+            display: inline-block;  /* ensures it fits text */
+            width: auto;   
+        }        
+        .btn-danger:hover {
+            color: red;
+        }
+        
+        .btn-success {
+            background: #10b981;
+        }
+        
+        .btn-success:hover {
+            background: #059669;
+        }
+        
+        .card {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #333;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .alert {
+            padding: 1rem;
+            border-radius: 5px;
+            margin-bottom: 1rem;
+        }
+        
+        .alert-success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #10b981;
+        }
+        
+        .alert-error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #ef4444;
+        }
+        
+        .alert-info {
+            background: #dbeafe;
+            color: #1e40af;
+            border: 1px solid #3b82f6;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+        
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        th {
+            background: #f9fafb;
+            font-weight: 600;
+            color: #374151;
+        }
+        
+        tr:hover {
+            background: #f9fafb;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+        
+        .badge-admin {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        
+        .badge-user {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+        
+        .score-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .score-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+        }
+        
+        .score-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+        
+        .score-list {
+            list-style: none;
+            margin-top: 1rem;
+        }
+        
+        .score-list li {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .score-list li:last-child {
+            border-bottom: none;
+        }
+        
+        .rank-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            font-weight: bold;
+            font-size: 0.875rem;
+            margin-right: 0.5rem;
+        }
+        
+        .rank-1 { background: #fbbf24; color: #78350f; }
+        .rank-2 { background: #d1d5db; color: #374151; }
+        .rank-3 { background: #f97316; color: white; }
+        .rank-other { background: #e5e7eb; color: #6b7280; }
+        
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .navbar-menu {
+                width: 100%;
+                margin-top: 1rem;
+            }
+            
+            .grid {
+                grid-template-columns: 1fr;
+            }
+            
+            table {
+                font-size: 0.875rem;
+            }
+            
+            th, td {
+                padding: 0.5rem;
+            }
+        }
+
+
+        .overall-score-section {
+            background: #1e293b;
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 30px;
+            color: #f8fafc;
+        }
+
+        .section-title {
+            font-size: 26px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .section-desc {
+            font-size: 16px;
+            color: #94a3b8;
+            margin-bottom: 20px;
+        }
+
+        /* Table */
+        .score-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        .score-table th,
+        .score-table td {
+            padding: 14px;
+            text-align: center;
+            font-size: 18px;
+        }
+
+        .score-table th {
+            background: #334155;
+            color: #f1f5f9;
+        }
+
+        .score-table tr:nth-child(even) {
+            background: #273445;
+        }
+
+        .score-table tr:nth-child(odd) {
+            background: #202b3a;
+        }
+
+        .neg-score {
+            color: #ef4444;
+            font-weight: 700;
+        }
+
+        /* Download button */
+        .download-btn {
+            display: inline-block;
+            padding: 12px 20px;
+            background: #2563eb;
+            color: #fff;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: 0.25s;
+        }
+
+        .download-btn:hover {
+            background: #1e40af;
+        }
+
+        /* Mobile responsive */
+        @media(max-width: 600px) {
+            .score-table th, .score-table td {
+                font-size: 16px;
+                padding: 10px;
+            }
+
+            .section-title {
+                font-size: 22px;
+            }
+
+            .download-btn {
+                display: block;
+                width: 100%;
+                text-align: center;
+                font-size: 20px;
+                padding: 16px;
+            }
+        }
+    
+
+
+    </style>
+</head>
+<body>
+    {% if user.is_authenticated %}
+    <div class="container">
+        <nav class="navbar">
+            <div class="navbar-brand">🏆 Scoreboard</div>
+
+            <!-- Hamburger Icon -->
+            <div class="navbar-toggle" onclick="toggleMenu()">
+                ☰
+            </div>
+
+            <!-- Menu Items -->
+            <div class="navbar-menu" id="navbarMenu">
+                <a href="{% url 'dashboard' %}">Dashboard</a>
+                <a href="{% url 'score_entry_list' %}">All Scores</a>
+
+                {% if user.is_staff %}
+                    <a href="{% url 'member_list' %}">Members</a>
+                    <a href="{% url 'score_entry_create' %}">Add Scores</a>
+                    <a href="{% url 'register_user' %}">Register User</a>
+                {% endif %}
+
+                <a href="{% url 'logout' %}" class=" btn-danger">
+                    Logout
+                </a>
+            </div>
+        </nav>    
+    </div>
+    {% endif %}
+    
+    <div class="container">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{% if message.tags == 'error' %}error{% elif message.tags == 'success' %}success{% else %}info{% endif %}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+        
+        {% block content %}{% endblock %}
+    </div>
+    <script>
+    function toggleMenu() {
+        document.querySelector(".navbar").classList.toggle("active");
+    }
+    </script>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+

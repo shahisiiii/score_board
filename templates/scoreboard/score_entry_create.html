@@ -1,0 +1,49 @@
+<!-- ============================================ -->
+<!-- FILE: templates/scoreboard/score_entry_create.html -->
+<!-- ============================================ -->
+{% extends 'scoreboard/base.html' %}
+
+{% block title %}Add Scores{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h1 style="margin-bottom: 1rem;">Add New Scores</h1>
+    <p style="color: #6b7280; margin-bottom: 2rem;">
+        ⚠️ You must provide scores for 4-6 members only. Leave others blank (they'll get 0).
+    </p>
+    
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        <div class="form-group">
+            <label>{{ form.date.label }}</label>
+            {{ form.date }}
+        </div>
+        
+        <div class="form-group">
+            <label>{{ form.image.label }} (Required)</label>
+            {{ form.image }}
+        </div>
+        
+        <h3 style="margin: 2rem 0 1rem;">Member Scores</h3>
+        <p style="color: #6b7280; margin-bottom: 1rem; font-size: 0.875rem;">
+            Enter scores for 4-6 members. Leave blank for members who didn't attend (auto 0).
+        </p>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1rem;">
+            {% for member in members %}
+            <div class="form-group" style="margin-bottom: 0;">
+                <label>{{ member.name }}</label>
+                <input type="number" name="score_{{ member.id }}" class="form-control" 
+                       placeholder="Leave blank for 0">
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+            <button type="submit" class="btn btn-success" style="flex: 1;">Save Scores</button>
+            <a href="{% url 'dashboard' %}" class="btn" style="flex: 1; text-align: center; background: #6b7280;">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

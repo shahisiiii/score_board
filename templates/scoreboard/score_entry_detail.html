@@ -1,0 +1,55 @@
+<!-- ============================================ -->
+<!-- FILE: templates/scoreboard/score_entry_detail.html -->
+<!-- ============================================ -->
+{% extends 'scoreboard/base.html' %}
+
+{% block title %}Score Details - {{ entry.date }}{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+        <div>
+            <h1 style="margin-bottom: 0.5rem;">Scores for {{ entry.date|date:"F d, Y" }}</h1>
+            <p style="color: #6b7280;">Created by {{ entry.created_by.username }} on {{ entry.created_at|date:"M d, Y" }}</p>
+        </div>
+        <a href="{% url 'generate_scoreboard' entry.id %}" class="btn btn-success">
+            📥 Download Scoreboard Image
+        </a>
+    </div>
+    
+    {% if entry.image %}
+    <div style="margin-bottom: 2rem;">
+        <img src="{{ entry.image.url }}" alt="Game Image" 
+             style="width: 100%; max-height: 400px; object-fit: cover; border-radius: 10px;">
+    </div>
+    {% endif %}
+    
+    <h2 style="margin-bottom: 1rem;">All Scores</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Rank</th>
+                <th>Member</th>
+                <th>Score</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for score in scores %}
+            <tr>
+                <td>
+                    <span class="rank-badge rank-{% if forloop.counter <= 3 %}{{ forloop.counter }}{% else %}other{% endif %}">
+                        #{{ forloop.counter }}
+                    </span>
+                </td>
+                <td><strong>{{ score.member.name }}</strong></td>
+                <td><strong style="font-size: 1.25rem; color: #667eea;">{{ score.score }}</strong></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    
+    <div style="margin-top: 2rem;">
+        <a href="{% url 'score_entry_list' %}" class="btn" style="background: #6b7280;">← Back to All Scores</a>
+    </div>
+</div>
+{% endblock %}

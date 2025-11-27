@@ -1,0 +1,41 @@
+<!-- ============================================ -->
+<!-- FILE: templates/scoreboard/member_list.html -->
+<!-- ============================================ -->
+{% extends 'scoreboard/base.html' %}
+
+{% block title %}Members{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+        <h1>Members Management</h1>
+        <a href="{% url 'member_create' %}" class="btn btn-success">➕ Add Member</a>
+    </div>
+    
+    {% if members %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Created At</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for member in members %}
+                <tr>
+                    <td><strong>{{ member.name }}</strong></td>
+                    <td>{{ member.created_at|date:"M d, Y" }}</td>
+                    <td>
+                        <a href="{% url 'member_edit' member.id %}" class="btn" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">Edit</a>
+                        <a href="{% url 'member_delete' member.id %}" class="btn btn-danger" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">Delete</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p style="text-align: center; color: #6b7280; padding: 2rem;">No members yet. Add your first member!</p>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,30 @@
+<!-- ============================================ -->
+<!-- FILE: templates/scoreboard/register_admin.html -->
+<!-- ============================================ -->
+{% extends 'scoreboard/base.html' %}
+
+{% block title %}Register Admin{% endblock %}
+
+{% block content %}
+<div class="card" style="max-width: 600px; margin: 0 auto;">
+    <h1 style="margin-bottom: 2rem;">Register New Admin</h1>
+    
+    <form method="post">
+        {% csrf_token %}
+        {% for field in form %}
+            <div class="form-group">
+                <label>{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}
+                    <p style="color: #ef4444; margin-top: 0.5rem;">{{ field.errors.0 }}</p>
+                {% endif %}
+            </div>
+        {% endfor %}
+        
+        <div style="display: flex; gap: 1rem;">
+            <button type="submit" class="btn btn-success" style="flex: 1;">Register Admin</button>
+            <a href="{% url 'dashboard' %}" class="btn" style="flex: 1; text-align: center; background: #6b7280;">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

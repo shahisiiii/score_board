@@ -1,0 +1,30 @@
+<!-- ============================================ -->
+<!-- FILE: templates/scoreboard/member_form.html -->
+<!-- ============================================ -->
+{% extends 'scoreboard/base.html' %}
+
+{% block title %}{{ action }} Member{% endblock %}
+
+{% block content %}
+<div class="card" style="max-width: 600px; margin: 0 auto;">
+    <h1 style="margin-bottom: 2rem;">{{ action }} Member</h1>
+    
+    <form method="post">
+        {% csrf_token %}
+        {% for field in form %}
+            <div class="form-group">
+                <label>{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}
+                    <p style="color: #ef4444; margin-top: 0.5rem;">{{ field.errors.0 }}</p>
+                {% endif %}
+            </div>
+        {% endfor %}
+        
+        <div style="display: flex; gap: 1rem;">
+            <button type="submit" class="btn btn-success" style="flex: 1;">Save Member</button>
+            <a href="{% url 'member_list' %}" class="btn" style="flex: 1; text-align: center; background: #6b7280;">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

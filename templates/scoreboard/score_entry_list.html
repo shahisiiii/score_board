@@ -1,0 +1,52 @@
+<!-- ============================================ -->
+<!-- FILE: templates/scoreboard/score_entry_list.html -->
+<!-- ============================================ -->
+{% extends 'scoreboard/base.html' %}
+
+{% block title %}All Scores{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h1 style="margin-bottom: 2rem;">All Score Entries</h1>
+    
+    {% if entries %}
+        <div class="grid">
+            {% for entry in entries %}
+            <div class="score-card">
+                {% if entry.image %}
+                    <img src="{{ entry.image.url }}" alt="Game Image">
+                {% endif %}
+                
+                <h3 style="margin-bottom: 0.5rem;">{{ entry.date|date:"F d, Y" }}</h3>
+                <p style="color: #6b7280; font-size: 0.875rem; margin-bottom: 1rem;">
+                    By {{ entry.created_by.username }} • {{ entry.created_at|date:"M d, Y" }}
+                </p>
+                
+                <ul class="score-list">
+                    {% for score in entry.scores.all|slice:":3" %}
+                    <li>
+                        <span>
+                            <span class="rank-badge rank-{{ forloop.counter }}">{{ forloop.counter }}</span>
+                            {{ score.member.name }}
+                        </span>
+                        <strong>{{ score.score }}</strong>
+                    </li>
+                    {% endfor %}
+                </ul>
+                
+                <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
+                    <a href="{% url 'score_entry_detail' entry.id %}" class="btn" style="flex: 1; text-align: center;">
+                        View All
+                    </a>
+                    <a href="{% url 'generate_scoreboard' entry.id %}" class="btn btn-success" style="flex: 1; text-align: center;">
+                        📥 Download
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p style="text-align: center; color: #6b7280; padding: 2rem;">No score entries found.</p>
+    {% endif %}
+</div>
+{% endblock %}
