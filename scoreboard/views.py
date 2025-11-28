@@ -14,6 +14,8 @@ import io
 from .models import Member, ScoreEntry, Score
 from .forms import UserRegistrationForm, MemberForm, ScoreEntryForm
 import datetime
+from django.db.models import Sum, Count, Q
+from django.db.models.functions import Coalesce
 
 def is_admin(user):
     return user.is_staff
@@ -82,23 +84,74 @@ def register_user_view(request):
 # ============================================
 # Dashboard
 # ============================================
-from django.db.models import Sum
 
 @login_required
 def dashboard_view(request):
-    score_entries = ScoreEntry.objects.all()[:10]
+    from django.db.models import Sum, Q
+    from collections import defaultdict
+
+    score_entries = ScoreEntry.objects.prefetch_related('scores__member')
+
     members = Member.objects.all()
-    members_score = Member.objects.annotate(
-        total_score=Sum('scores__score')
-    ).order_by('-total_score')
-    
-    context = {
-        'score_entries': score_entries,
-        'members': members,
-        'is_admin': request.user.is_staff,
-        'members_score':members_score
-    }
-    return render(request, 'scoreboard/dashboard.html', context)
+
+    # Initialize stats
+    rank_points = defaultdict(int)
+    max_points = defaultdict(int)
+    total_games = defaultdict(int)
+
+    for entry in score_entries:
+        game_scores = list(entry.scores.all())
+
+        # Ignore empty game
+        if not game_scores:
+            continue
+
+        # Sort highest → lowest
+        sorted_scores = sorted(game_scores, key=lambda s: s.score, reverse=True)
+
+        total_members_in_game = len(sorted_scores)
+
+        # Assign rank points
+        for position, score_obj in enumerate(sorted_scores, start=1):
+            member_id = score_obj.member_id
+
+            # Skip non-attending members
+            if score_obj.score == 0:
+                continue
+
+            # Rank points (higher rank = more points)
+            points = total_members_in_game - position + 1
+
+            rank_points[member_id] += points
+            max_points[member_id] += total_members_in_game
+            total_games[member_id] += 1
+
+    # Prepare final annotated member list
+    members_list = []
+    for m in members:
+        m.total_score = m.scores.aggregate(total=Sum('score'))['total'] or 0
+        m.total_games = total_games.get(m.id, 0)
+
+        rp = rank_points.get(m.id, 0)
+        mp = max_points.get(m.id, 0)
+
+        if mp == 0:
+            m.win_rate = 0
+        else:
+            m.win_rate = (rp / mp) * 100
+
+        members_list.append(m)
+
+    # Sort by total score
+    members_score = sorted(members_list, key=lambda x: (-x.total_score, x.name))
+
+    return render(request, "scoreboard/dashboard.html", {
+        "members_score": members_score,
+        "score_entries": score_entries[:10],
+        "members": members,
+        "is_admin": request.user.is_staff
+    })
+
 
 # ============================================
 # Member Management (Admin Only)

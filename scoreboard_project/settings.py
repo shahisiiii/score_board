@@ -5,8 +5,8 @@ from datetime import timedelta
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = 'django-insecure-change-this-in-production-12345'
-DEBUG = False
-ALLOWED_HOSTS = ['shahis.pythonanywhere.com']
+DEBUG = True
+ALLOWED_HOSTS = ['shahis.pythonanywhere.com','127.0.0.1']
 
 INSTALLED_APPS = [
     'django.contrib.admin',

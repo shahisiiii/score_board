@@ -20,52 +20,50 @@
 
 <div class="overall-score-section">
     <h2 class="section-title">Overall Scoreboard</h2>
-    <p class="section-desc">Total score ranking of all members.</p>
+    <p class="section-desc">Total score, games played, and win rate of all members.</p>
 
-    <table class="score-table">
-        <thead>
-            <tr>
-                <th>Rank</th>
-                <th>Member</th>
-                <th>Total Score</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for m in members_score %}
-            <tr>
+    <div class="table-responsive">
+        <table class="score-table">
+            <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th>Member</th>
+                    <th>Games</th>
+                    <th>WR</th>
+                    <th>Score</th>
+                </tr>
+            </thead>
 
-                <!-- Rank -->
-                <td class="
-                    {% if forloop.counter == 1 %}rank-text-1{% endif %}
-                    {% if forloop.counter == 2 %}rank-text-2{% endif %}
-                    {% if forloop.counter == 3 %}rank-text-3{% endif %}
-                ">
-                    #{{ forloop.counter }}
-                </td>
+            <tbody>
+                {% for m in members_score %}
+                <tr>
+                    <td class="{% if forloop.counter == 1 %}rank-text-1{% elif forloop.counter == 2 %}rank-text-2{% elif forloop.counter == 3 %}rank-text-3{% endif %}">
+                        #{{ forloop.counter }}
+                    </td>
 
-                <!-- Member Name -->
-                <td class="
-                    {% if forloop.counter == 1 %}rank-text-1{% endif %}
-                    {% if forloop.counter == 2 %}rank-text-2{% endif %}
-                    {% if forloop.counter == 3 %}rank-text-3{% endif %}
-                ">
-                    {{ m.name }}
-                </td>
+                    <td class="{% if forloop.counter == 1 %}rank-text-1{% elif forloop.counter == 2 %}rank-text-2{% elif forloop.counter == 3 %}rank-text-3{% endif %}">
+                        {{ m.name }}
+                    </td>
 
-                <!-- Total Score -->
-                <td class="
-                    {% if m.total_score < 0 %}neg-score{% endif %}
-                    {% if forloop.counter == 1 %}rank-text-1{% endif %}
-                    {% if forloop.counter == 2 %}rank-text-2{% endif %}
-                    {% if forloop.counter == 3 %}rank-text-3{% endif %}
-                ">
-                    {{ m.total_score|default:"0" }}
-                </td>
+                    <td class="">
+                        {{ m.total_games|default:"0" }}
+                    </td>
 
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+                    <td class="">
+                        {{ m.win_rate|floatformat:1 }}%
+                    </td>
+
+                    <td class="
+                        {% if m.total_score < 0 %}neg-score{% endif %}
+                        {% if forloop.counter == 1 %}rank-text-1{% elif forloop.counter == 2 %}rank-text-2{% elif forloop.counter == 3 %}rank-text-3{% endif %}
+                    ">
+                        {{ m.total_score|default:"0" }}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </div>
 
 
