@@ -67,6 +67,74 @@
 </div>
 
 
+<div class="overall-score-section">
+    <h2 class="section-title">🏅 Achievements Summary</h2>
+    <p class="section-desc">Position ranking for each member across all games.</p>
+    <div class="table-responsive">
+
+        <table class="score-table-ach">
+            <thead>
+                <tr>
+                    <th>Member</th>
+                    <th>1st</th>
+                    <th>2nd</th>
+                    <th>3rd</th>
+                    <th>4th</th>
+                    <th>5th</th>
+                    <th>Lost</th>
+                    <th>score</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for m in achievements %}
+                <tr>
+                    <td>{{ m.name }}</td>
+
+                    <td class="score-cell 
+                        {% if m.first == 0 %}zero{% elif m.first > 0 %}pos-score{% endif %}">
+                        {{ m.first }}
+                    </td>
+
+                    <td class="score-cell 
+                        {% if m.second == 0 %}zero{% elif m.second > 0 %}pos-score{% endif %}">
+                        {{ m.second }}
+                    </td>
+
+                    <td class="score-cell 
+                        {% if m.third == 0 %}zero{% elif m.third > 0 %}pos-score{% endif %}">
+                        {{ m.third }}
+                    </td>
+
+                    <td class="score-cell 
+                        {% if m.fourth == 0 %}zero{% elif m.fourth > 0 %}pos-score{% endif %}">
+                        {{ m.fourth }}
+                    </td>
+
+                    <td class="score-cell 
+                        {% if m.fifth == 0 %}zero{% elif m.fifth > 0 %}pos-score{% endif %}">
+                        {{ m.fifth }}
+                    </td>
+
+                    <td class="score-cell 
+                        {% if m.lost == 0 %}zero{% elif m.lost > 0 %}neg-score{% endif %}">
+                        {{ m.lost }}
+                    </td>
+                    <td class="score-cell 
+                        {% if m.total_score < 0 %}neg-score{% endif %}
+                        {% if forloop.counter == 1 %}rank-text-1{% elif forloop.counter == 2 %}rank-text-2{% elif forloop.counter == 3 %}rank-text-3{% endif %}">
+                        {{ m.total_score|default:"0" }}                   
+                     </td>
+
+
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
 <div class="card">
     <h2 style="margin-bottom: 1rem;">Recent Score Entries</h2>
     

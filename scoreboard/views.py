@@ -144,10 +144,32 @@ def dashboard_view(request):
 
     # Sort by total score
     members_score = sorted(members_list, key=lambda x: (-x.total_score, x.name))
+    achievements = calculate_member_achievements(score_entries, members)
+    achievements_list = []
+    for m in members:
+        ach = achievements[m.id]
+        achievements_list.append({
+            "name": m.name,
+            "first": ach["first"],
+            "second": ach["second"],
+            "third": ach["third"],
+            "fourth": ach["fourth"],
+            "fifth": ach["fifth"],
+            "lost": ach["lost"],
+            "total_score": m.scores.aggregate(total=Sum('score'))['total'] or 0,
+        })
+
+    # Sort by best performance
+    achievements_list = sorted(
+        achievements_list,
+        key=lambda x: (-x["total_score"], x["name"])
+    )
+
 
     return render(request, "scoreboard/dashboard.html", {
         "members_score": members_score,
         "score_entries": score_entries[:10],
+        "achievements": achievements_list,  
         "members": members,
         "is_admin": request.user.is_staff
     })
@@ -514,3 +536,63 @@ def generate_overall_scoreboard_image(request):
     response = HttpResponse(buffer, content_type="image/png")
     response["Content-Disposition"] = 'attachment; filename="overall_scoreboard.png"'
     return response
+
+
+def calculate_member_achievements(score_entries, members):
+    """
+    Returns a dict: member_id → achievement stats
+    """
+    from collections import defaultdict
+    
+    # Initialise dictionary for each member
+    stats = {
+        m.id: {
+            "member": m,
+            "first": 0,
+            "second": 0,
+            "third": 0,
+            "fourth": 0,
+            "fifth": 0,
+            "lost": 0,
+        }
+        for m in members
+    }
+
+    for entry in score_entries:
+        game_scores = list(entry.scores.all())
+
+        if not game_scores:
+            continue  # skip empty game
+
+        # Sort by highest score → lowest
+        sorted_scores = sorted(game_scores, key=lambda s: s.score, reverse=True)
+
+        for index, score_obj in enumerate(sorted_scores):
+            member_id = score_obj.member_id
+            score = score_obj.score
+            if score_obj.score == 0:
+                continue
+
+            # LOST case (negative score)
+            if score < 0:
+                stats[member_id]["lost"] += 1
+                continue
+
+            # Ranking: based on sorted index
+            pos = index + 1
+
+            if pos == 1:
+                stats[member_id]["first"] += 1
+            elif pos == 2:
+                stats[member_id]["second"] += 1
+            elif pos == 3:
+                stats[member_id]["third"] += 1
+            elif pos == 4:
+                stats[member_id]["fourth"] += 1
+            elif pos == 5:
+                stats[member_id]["fifth"] += 1
+            else:
+                # No ranking for >5, but no "lost" unless negative
+                pass
+
+    return stats

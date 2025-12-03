@@ -82,7 +82,23 @@
             -webkit-overflow-scrolling: touch;
             border-radius: 10px;
         }
+        /* Zero value */
+        .score-cell.zero {
+            color: #c8c7c5d8 !important;
+            font-weight: 500;
+        }
 
+        /* Positive value */
+        .score-cell.pos-score {
+            color: #ffdd00 !important;
+            font-weight: 700;
+        }
+
+        /* Negative value (lost) */
+        .neg-score {
+            color: #ef4444 !important; /* red */
+            font-weight: 700;
+        }
         /* Mobile Responsive */
         @media (max-width: 768px) {
 
@@ -386,6 +402,19 @@
             background: #202b3a;
         }
 
+        .score-table-ach th {
+            background: #334155;
+            color: #f1f5f9;
+        }
+
+        .score-table-ach tr:nth-child(even) {
+            background: #273445;
+        }
+
+        .score-table-ach tr:nth-child(odd) {
+            background: #202b3a;
+        }
+
         .neg-score {
             color: #ef4444;
             font-weight: 700;
@@ -447,7 +476,27 @@
             .score-table td:nth-child(5) {
                 width: 65px;
             }
-        }
+        
+
+
+
+        /* Smaller, tighter layout on mobile */
+            .score-table-ach th,
+            .score-table-ach td {
+                padding: 8px 4px;
+                font-size: 12px;
+                white-space: normal;   /* Allow wrapping */
+                text-align: center;
+
+            }
+            
+        
+
+        /* ================================================
+        ACHIEVEMENT STYLING — CLEAN, MODERN, NO COLORS
+        ================================================ */
+
+    }
 
     </style>
 </head>
