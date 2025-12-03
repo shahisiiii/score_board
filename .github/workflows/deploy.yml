@@ -1,0 +1,23 @@
+name: Deploy to PythonAnywhere
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run deploy script on PythonAnywhere
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ssh.pythonanywhere.com
+          username: shahis
+          key: ${{ secrets.PA_SSH_KEY }}
+          script: |
+            cd /home/shahis/score_board
+            ./deploy.sh
