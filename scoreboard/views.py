@@ -143,7 +143,10 @@ def dashboard_view(request):
         members_list.append(m)
 
     # Sort by total score
-    members_score = sorted(members_list, key=lambda x: (-x.total_score, x.name))
+    members_score = sorted(
+        members_list,
+        key=lambda m: (-m.total_score, -m.win_rate, m.name)
+    )
     achievements = calculate_member_achievements(score_entries, members)
     achievements_list = []
     for m in members:
@@ -157,12 +160,13 @@ def dashboard_view(request):
             "fifth": ach["fifth"],
             "lost": ach["lost"],
             "total_score": m.scores.aggregate(total=Sum('score'))['total'] or 0,
+            "win_rate": m.win_rate,
         })
 
     # Sort by best performance
     achievements_list = sorted(
         achievements_list,
-        key=lambda x: (-x["total_score"], x["name"])
+        key=lambda x: (-x["total_score"], -x["win_rate"], x["name"])
     )
 
 
